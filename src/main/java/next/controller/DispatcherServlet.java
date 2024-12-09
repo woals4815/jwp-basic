@@ -22,15 +22,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        log.info("DispatcherServlet doGet {}", req.getRequestURI());
-        String uri = RequestMapping.getController(req.getRequestURI()).execute(req, resp);
-        processUri(uri, req, resp);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        log.info("DispatcherServlet doPost {}", req.getRequestURI());
+    protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String uri = RequestMapping.getController(req.getRequestURI()).execute(req, resp);
         processUri(uri, req, resp);
     }
