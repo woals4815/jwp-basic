@@ -1,3 +1,6 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 <!DOCTYPE html>
 <html lang="kr">
 	<head>
@@ -20,7 +23,7 @@
           <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse1">
           <i class="glyphicon glyphicon-search"></i>
           </button>
-      
+
         </div>
         <div class="collapse navbar-collapse" id="navbar-collapse1">
           <form class="navbar-form pull-left">
@@ -31,7 +34,7 @@
                 </div>
               </div>
           </form>
-          <ul class="nav navbar-nav navbar-right">             
+          <ul class="nav navbar-nav navbar-right">
              <li>
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-bell"></i></a>
                 <ul class="dropdown-menu">
@@ -41,8 +44,8 @@
              </li>
              <li><a href="./user/list.html"><i class="glyphicon glyphicon-user"></i></a></li>
            </ul>
-        </div>	
-     </div>	
+        </div>
+     </div>
 </nav>
 <div class="navbar navbar-default" id="subnav">
     <div class="col-md-12">
@@ -57,14 +60,21 @@
         <div class="collapse navbar-collapse" id="navbar-collapse2">
             <ul class="nav navbar-nav navbar-right">
                 <li class="active"><a href="index.html">Posts</a></li>
-                <li><a href="user/login.html" role="button">로그인</a></li>
-                <li><a href="user/form.html" role="button">회원가입</a></li>
+                <c:choose>
+                    <c:when test="${not empty sessionScope.user}">
+                        <li><a href="#" role="button">로그아웃</a></li>
+                        <li><a href="#" role="button">개인정보수정</a></li></c:when>
+                    <c:otherwise>
+                        <li><a href="user/login.html" role="button">로그인</a></li>
+                        <li><a href="user/form.html" role="button">회원가입</a></li>
+                    </c:otherwise>
+                </c:choose>
+
                 <!--
                 <li><a href="#loginModal" role="button" data-toggle="modal">로그인</a></li>
                 <li><a href="#registerModal" role="button" data-toggle="modal">회원가입</a></li>
                 -->
-                <li><a href="#" role="button">로그아웃</a></li>
-                <li><a href="#" role="button">개인정보수정</a></li>
+
             </ul>
         </div>
     </div>
