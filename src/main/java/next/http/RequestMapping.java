@@ -1,9 +1,6 @@
 package next.http;
 
-import next.controller.Controller;
-import next.controller.CreateUserController;
-import next.controller.ForwardController;
-import next.controller.ListUserController;
+import next.controller.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +15,7 @@ public class RequestMapping {
         controllers.put("/users/loginForm", forwardController);
         controllers.put("/users/form", forwardController);
         controllers.put("/users/create", new CreateUserController());
+        controllers.put("/users/login", new LoginController());
     }
 
     static public Controller getController(String uri) {
