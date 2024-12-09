@@ -16,6 +16,7 @@ public class RequestMapping {
         controllers.put("/users/form", forwardController);
         controllers.put("/users/create", new CreateUserController());
         controllers.put("/users/login", new LoginController());
+        controllers.put("/users/logout", new LogoutController());
     }
 
     static public Controller getController(String uri) {
