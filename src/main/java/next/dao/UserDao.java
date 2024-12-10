@@ -78,15 +78,11 @@ public class UserDao {
                 return new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"), rs.getString("email"));
             }
         };
-        PreParedStatementSetter pstmtSetter = new PreParedStatementSetter() {
-            @Override
-            public PreparedStatement setValues(PreparedStatement pstmt) throws SQLException {
-                pstmt.setString(1, userId);
-                return pstmt;
-            }
-        };
 
-        Object result = selectJdbcTemplate.queryForObject("SELECT userId, password, name, email FROM USERS WHERE userid=?", mapper, pstmtSetter);
-        return (User) result;
+        User result = selectJdbcTemplate.queryForObject("SELECT userId, password, name, email FROM USERS WHERE userid=?", (ResultSet rs) -> {
+            return new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"), rs.getString("email"));
+        }, userId);
+
+        return result;
     }
 }

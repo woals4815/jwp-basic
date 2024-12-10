@@ -62,7 +62,35 @@ public abstract class JdbcTemplate {
 
             }
         }
+    }
 
+
+    public <T> T queryForObject(String sql, RowMapper<T> mappper, Object... values) throws DataAccessException {
+        ResultSet rs = null;
+        try (Connection con = ConnectionManager.getConnection(); PreparedStatement pstmt = con.prepareStatement(sql))  {
+            for (int i = 0; i < values.length; i++) {
+                pstmt.setObject(i + 1, values[i]);
+            }
+            rs = pstmt.executeQuery();
+
+            T value = null;
+
+            if (rs.next()) {
+                value = mappper.mapRow(rs);
+            }
+
+            return value;
+        } catch (SQLException e) {
+            throw new DataAccessException(e);
+        } finally {
+            if (rs != null) {
+                try {rs.close();
+                } catch (SQLException e) {
+                    throw new DataAccessException(e);
+                }
+
+            }
+        }
     }
 
     public void update(String sql, PreParedStatementSetter pstmtSetter) throws DataAccessException {
