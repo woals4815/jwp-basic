@@ -11,12 +11,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class JdbcTemplate {
-    public List query(String sql, RowMapper mapper) throws SQLException {
+    public List query(String sql, RowMapper mapper, PreParedStatementSetter pstmtSetter) throws SQLException {
         Connection con = null;
         ResultSet rs = null;
         try {
             con = ConnectionManager.getConnection();
-            rs = con.prepareStatement(sql).executeQuery();
+            PreparedStatement ps = con.prepareStatement(sql);
+            pstmtSetter.setValues(ps);
+
+            rs = ps.executeQuery();
             List list = new ArrayList();
             while(rs.next()) {
                 list.add(mapper.mapRow(rs));
@@ -32,14 +35,14 @@ public abstract class JdbcTemplate {
         }
     }
 
-    public Object queryForObject(String sql, RowMapper mappper) throws SQLException {
+    public Object queryForObject(String sql, RowMapper mappper, PreParedStatementSetter pstmtSetter) throws SQLException {
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         try {
             con = ConnectionManager.getConnection();
             pstmt = con.prepareStatement(sql);
-            setValues(pstmt);
+            pstmtSetter.setValues(pstmt);
             rs = pstmt.executeQuery();
 
             Object value = null;
@@ -61,13 +64,13 @@ public abstract class JdbcTemplate {
         }
     }
 
-    public void update(String sql) throws SQLException {
+    public void update(String sql, PreParedStatementSetter pstmtSetter) throws SQLException {
         Connection con = null;
         PreparedStatement pstmt = null;
         try {
             con = ConnectionManager.getConnection();
             pstmt = con.prepareStatement(sql);
-            setValues(pstmt);
+            pstmtSetter.setValues(pstmt);
             pstmt.executeUpdate();
         } finally {
             if (pstmt != null) {

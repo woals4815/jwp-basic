@@ -12,6 +12,7 @@ import core.jdbc.ConnectionManager;
 import next.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 
 public class UserDao {
     private static final Logger log = LoggerFactory.getLogger(UserDao.class);
@@ -27,7 +28,18 @@ public class UserDao {
                 return pstmt;
             }
         };
-        insertJdbcTemplate.update("INSERT INTO USERS VALUES (?,?,?,?)");
+        PreParedStatementSetter pstmtSetter = new PreParedStatementSetter() {
+            @Override
+            public PreparedStatement setValues(PreparedStatement pstmt) throws SQLException {
+                pstmt.setString(1, user.getUserId());
+                pstmt.setString(2, user.getPassword());
+                pstmt.setString(3, user.getName());
+                pstmt.setString(4, user.getEmail());
+                return pstmt;
+            }
+        };
+
+        insertJdbcTemplate.update("INSERT INTO USERS VALUES (?,?,?,?)", pstmtSetter);
     }
 
     public void update(User user) throws SQLException {
@@ -41,7 +53,17 @@ public class UserDao {
                 return pstmt;
             }
         };
-        updateJdbcTemplate.update("UPDATE USERS SET password=?, name=?, email=? WHERE userId=?");
+        PreParedStatementSetter pstmtSetter = new PreParedStatementSetter() {
+            @Override
+            public PreparedStatement setValues(PreparedStatement pstmt) throws SQLException {
+                pstmt.setString(1, user.getPassword());
+                pstmt.setString(2, user.getName());
+                pstmt.setString(3, user.getEmail());
+                pstmt.setString(4, user.getUserId());
+                return pstmt;
+            }
+        };
+        updateJdbcTemplate.update("UPDATE USERS SET password=?, name=?, email=? WHERE userId=?", pstmtSetter);
     }
 
     public List<User> findAll() throws SQLException {
@@ -69,7 +91,14 @@ public class UserDao {
             }
         };
 
-        List<User> users = selectJdbcTemplate.query("SELECT * FROM USERS", mapper);
+        PreParedStatementSetter pstmtSetter = new PreParedStatementSetter() {
+            @Override
+            public PreparedStatement setValues(PreparedStatement preparedStatement) throws SQLException {
+                return preparedStatement;
+            }
+        };
+
+        List<User> users = selectJdbcTemplate.query("SELECT * FROM USERS", mapper, pstmtSetter);
         return users;
     }
 
@@ -87,7 +116,15 @@ public class UserDao {
                 return new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"), rs.getString("email"));
             }
         };
-        Object result = selectJdbcTemplate.queryForObject("SELECT userId, password, name, email FROM USERS WHERE userid=?", mapper);
+        PreParedStatementSetter pstmtSetter = new PreParedStatementSetter() {
+            @Override
+            public PreparedStatement setValues(PreparedStatement pstmt) throws SQLException {
+                pstmt.setString(1, userId);
+                return pstmt;
+            }
+        };
+
+        Object result = selectJdbcTemplate.queryForObject("SELECT userId, password, name, email FROM USERS WHERE userid=?", mapper, pstmtSetter);
         return (User) result;
     }
 }
