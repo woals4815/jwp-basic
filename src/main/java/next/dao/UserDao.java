@@ -74,20 +74,10 @@ public class UserDao {
             }
         };
 
-        RowMapper mapper = new RowMapper() {
+        RowMapper<User> mapper = new RowMapper<User>() {
             @Override
-            public List<User> mapRow(ResultSet rs) throws SQLException {
-                List<User> users = new ArrayList<>();
-                while (rs.next()) {
-                    User newUser = new User(
-                            rs.getString("userId"),
-                            rs.getString("password"),
-                            rs.getString("name"),
-                            rs.getString("email")
-                    );
-                    users.add(newUser);
-                }
-                return users;
+            public User mapRow(ResultSet rs) throws SQLException {
+                return new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"), rs.getString("email"));
             }
         };
 
@@ -110,9 +100,9 @@ public class UserDao {
                 return pstmt;
             }
         };
-        RowMapper mapper = new RowMapper() {
+        RowMapper<User> mapper = new RowMapper<User>() {
             @Override
-            public Object mapRow(ResultSet rs) throws SQLException {
+            public User mapRow(ResultSet rs) throws SQLException {
                 return new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"), rs.getString("email"));
             }
         };

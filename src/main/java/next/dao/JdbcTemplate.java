@@ -1,6 +1,7 @@
 package next.dao;
 
 import core.jdbc.ConnectionManager;
+import next.exception.DataAccessException;
 import next.model.User;
 
 import java.sql.Connection;
@@ -11,16 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class JdbcTemplate {
-    public List query(String sql, RowMapper mapper, PreParedStatementSetter pstmtSetter) throws SQLException {
+    public <T> List<T> query(String sql, RowMapper<T> mapper, PreParedStatementSetter pstmtSetter) throws SQLException {
         Connection con = null;
         ResultSet rs = null;
+
         try {
             con = ConnectionManager.getConnection();
             PreparedStatement ps = con.prepareStatement(sql);
             pstmtSetter.setValues(ps);
 
             rs = ps.executeQuery();
-            List list = new ArrayList();
+            List<T> list = new ArrayList();
             while(rs.next()) {
                 list.add(mapper.mapRow(rs));
             }
@@ -35,51 +37,39 @@ public abstract class JdbcTemplate {
         }
     }
 
-    public Object queryForObject(String sql, RowMapper mappper, PreParedStatementSetter pstmtSetter) throws SQLException {
-        Connection con = null;
-        PreparedStatement pstmt = null;
+    public <T> T queryForObject(String sql, RowMapper<T> mappper, PreParedStatementSetter pstmtSetter) throws DataAccessException {
         ResultSet rs = null;
-        try {
-            con = ConnectionManager.getConnection();
-            pstmt = con.prepareStatement(sql);
+        try (Connection con = ConnectionManager.getConnection(); PreparedStatement pstmt = con.prepareStatement(sql))  {
             pstmtSetter.setValues(pstmt);
             rs = pstmt.executeQuery();
 
-            Object value = null;
+            T value = null;
+
             if (rs.next()) {
                 value = mappper.mapRow(rs);
             }
 
             return value;
+        } catch (SQLException e) {
+            throw new DataAccessException(e);
         } finally {
             if (rs != null) {
-                rs.close();
-            }
-            if (pstmt != null) {
-                pstmt.close();
-            }
-            if (con != null) {
-                con.close();
+                try {rs.close();
+                } catch (SQLException e) {
+                    throw new DataAccessException(e);
+                }
+
             }
         }
+
     }
 
-    public void update(String sql, PreParedStatementSetter pstmtSetter) throws SQLException {
-        Connection con = null;
-        PreparedStatement pstmt = null;
-        try {
-            con = ConnectionManager.getConnection();
-            pstmt = con.prepareStatement(sql);
+    public void update(String sql, PreParedStatementSetter pstmtSetter) throws DataAccessException {
+        try (Connection con = ConnectionManager.getConnection(); PreparedStatement pstmt = con.prepareStatement(sql)) {
             pstmtSetter.setValues(pstmt);
             pstmt.executeUpdate();
-        } finally {
-            if (pstmt != null) {
-                pstmt.close();
-            }
-
-            if (con != null) {
-                con.close();
-            }
+        } catch (SQLException e) {
+            throw new DataAccessException(e);
         }
     }
     public abstract PreparedStatement setValues(PreparedStatement pstmt) throws SQLException;
