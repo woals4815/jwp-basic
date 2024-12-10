@@ -15,46 +15,35 @@ import org.slf4j.LoggerFactory;
 public class UserDao {
     private static final Logger log = LoggerFactory.getLogger(UserDao.class);
 
-    private final JdbcTemplate insertJdbcTemplate = new JdbcTemplate() {
-        @Override
-        public PreparedStatement setValues(User user, PreparedStatement pstmt) throws SQLException {
-            pstmt.setString(1, user.getUserId());
-            pstmt.setString(2, user.getPassword());
-            pstmt.setString(3, user.getName());
-            pstmt.setString(4, user.getEmail());
-            return pstmt;
-        }
 
-        @Override
-        public String createQuery() {
-            return "INSERT INTO USERS VALUES (?, ?, ?, ?)";
-        }
-    };
-
-    private final JdbcTemplate updateJdbcTemplate = new JdbcTemplate() {
-        @Override
-        public PreparedStatement setValues(User user, PreparedStatement pstmt) throws SQLException {
-            pstmt.setString(1, user.getPassword());
-            pstmt.setString(2, user.getName());
-            pstmt.setString(3, user.getEmail());
-            pstmt.setString(4, user.getUserId());
-            return pstmt;
-        }
-
-        @Override
-        public String createQuery() {
-            String sql = "UPDATE USERS SET password=?, name=?, email=? WHERE userId=?";
-            return sql;
-        }
-    };
 
 
     public void insert(User user) throws SQLException {
-        insertJdbcTemplate.update(user);
+        JdbcTemplate insertJdbcTemplate = new JdbcTemplate() {
+            @Override
+            public PreparedStatement setValues(PreparedStatement pstmt) throws SQLException {
+                pstmt.setString(1, user.getUserId());
+                pstmt.setString(2, user.getPassword());
+                pstmt.setString(3, user.getName());
+                pstmt.setString(4, user.getEmail());
+                return pstmt;
+            }
+        };
+        insertJdbcTemplate.update("INSERT INTO USERS VALUES (?,?,?,?)");
     }
 
     public void update(User user) throws SQLException {
-        updateJdbcTemplate.update(user);
+        JdbcTemplate updateJdbcTemplate = new JdbcTemplate() {
+            @Override
+            public PreparedStatement setValues(PreparedStatement pstmt) throws SQLException {
+                pstmt.setString(1, user.getPassword());
+                pstmt.setString(2, user.getName());
+                pstmt.setString(3, user.getEmail());
+                pstmt.setString(4, user.getUserId());
+                return pstmt;
+            }
+        };
+        updateJdbcTemplate.update("UPDATE USERS SET password=?, name=?, email=? WHERE userId=?");
     }
 
     public List<User> findAll() throws SQLException {
