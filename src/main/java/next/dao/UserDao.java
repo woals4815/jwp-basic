@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import core.jdbc.ConnectionManager;
@@ -44,15 +45,45 @@ public class UserDao {
     }
 
     public List<User> findAll() throws SQLException {
-        // TODO 구현 필요함.
-        SelectJdbcTemplate selectJdbcTemplate = new SelectJdbcTemplate();
-        List<User> users =  selectJdbcTemplate.query();
+        SelectJdbcTemplate selectJdbcTemplate = new SelectJdbcTemplate() {
+            @Override
+            public PreparedStatement setValues(PreparedStatement pstmt) throws SQLException {
+                return null;
+            }
+
+            @Override
+            public List<User> mapRow(ResultSet rs) throws SQLException {
+                List<User> users = new ArrayList<>();
+                while (rs.next()) {
+
+                    User newUser = new User(
+                            rs.getString("userId"),
+                            rs.getString("password"),
+                            rs.getString("name"),
+                            rs.getString("email")
+                    );
+                    users.add(newUser);
+                }
+                return users;
+            }
+        };
+        List<User> users = selectJdbcTemplate.query("SELECT * FROM USERS");
         return users;
     }
 
     public User findByUserId(String userId) throws SQLException {
-       SelectJdbcTemplate selectJdbcTemplate = new SelectJdbcTemplate();
-        User user = selectJdbcTemplate.queryForObject(userId);
+        SelectJdbcTemplate selectJdbcTemplate = new SelectJdbcTemplate() {
+            @Override
+            public PreparedStatement setValues(PreparedStatement pstmt) throws SQLException {
+                pstmt.setString(1, userId);
+                return pstmt;
+            }
+            @Override
+            public List<User> mapRow(ResultSet rs) throws SQLException {
+                return Collections.emptyList();
+            }
+        };
+        User user = selectJdbcTemplate.queryForObject("SELECT userId, password, name, email FROM USERS WHERE userid=?", userId);
         return user;
     }
 }
