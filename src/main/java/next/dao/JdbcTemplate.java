@@ -3,6 +3,7 @@ package next.dao;
 import core.jdbc.ConnectionManager;
 import next.exception.DataAccessException;
 import next.model.User;
+import org.springframework.jdbc.core.PreparedStatementSetter;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -72,5 +73,15 @@ public abstract class JdbcTemplate {
             throw new DataAccessException(e);
         }
     }
-    public abstract PreparedStatement setValues(PreparedStatement pstmt) throws SQLException;
+
+    public void update(String sql, Object... values) throws DataAccessException {
+        try (Connection con = ConnectionManager.getConnection(); PreparedStatement pstmt = con.prepareStatement(sql)) {
+            for (int i = 0; i < values.length; i++) {
+                pstmt.setObject(i + 1, values[i]);
+            }
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException(e);
+        }
+    }
 }

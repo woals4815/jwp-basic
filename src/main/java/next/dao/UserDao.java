@@ -4,29 +4,18 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
-import core.jdbc.ConnectionManager;
+import next.exception.DataAccessException;
 import next.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.PreparedStatementSetter;
 
 public class UserDao {
     private static final Logger log = LoggerFactory.getLogger(UserDao.class);
 
-    public void insert(User user) throws SQLException {
+    public void insert(User user) throws DataAccessException {
         JdbcTemplate insertJdbcTemplate = new JdbcTemplate() {
-            @Override
-            public PreparedStatement setValues(PreparedStatement pstmt) throws SQLException {
-                pstmt.setString(1, user.getUserId());
-                pstmt.setString(2, user.getPassword());
-                pstmt.setString(3, user.getName());
-                pstmt.setString(4, user.getEmail());
-                return pstmt;
-            }
         };
         PreParedStatementSetter pstmtSetter = new PreParedStatementSetter() {
             @Override
@@ -42,16 +31,8 @@ public class UserDao {
         insertJdbcTemplate.update("INSERT INTO USERS VALUES (?,?,?,?)", pstmtSetter);
     }
 
-    public void update(User user) throws SQLException {
+    public void update(User user) throws DataAccessException {
         JdbcTemplate updateJdbcTemplate = new JdbcTemplate() {
-            @Override
-            public PreparedStatement setValues(PreparedStatement pstmt) throws SQLException {
-                pstmt.setString(1, user.getPassword());
-                pstmt.setString(2, user.getName());
-                pstmt.setString(3, user.getEmail());
-                pstmt.setString(4, user.getUserId());
-                return pstmt;
-            }
         };
         PreParedStatementSetter pstmtSetter = new PreParedStatementSetter() {
             @Override
@@ -68,10 +49,6 @@ public class UserDao {
 
     public List<User> findAll() throws SQLException {
         JdbcTemplate selectJdbcTemplate = new JdbcTemplate() {
-            @Override
-            public PreparedStatement setValues(PreparedStatement pstmt) throws SQLException {
-                return null;
-            }
         };
 
         RowMapper<User> mapper = new RowMapper<User>() {
@@ -94,11 +71,6 @@ public class UserDao {
 
     public User findByUserId(String userId) throws SQLException {
         JdbcTemplate selectJdbcTemplate = new JdbcTemplate() {
-            @Override
-            public PreparedStatement setValues(PreparedStatement pstmt) throws SQLException {
-                pstmt.setString(1, userId);
-                return pstmt;
-            }
         };
         RowMapper<User> mapper = new RowMapper<User>() {
             @Override
