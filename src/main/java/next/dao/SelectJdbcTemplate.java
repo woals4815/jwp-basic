@@ -47,8 +47,7 @@ public class SelectJdbcTemplate {
             con = ConnectionManager.getConnection();
             String sql = "SELECT userId, password, name, email FROM USERS WHERE userid=?";
             pstmt = con.prepareStatement(sql);
-            pstmt.setString(1, userId);
-
+            setValues(userId, pstmt);
             rs = pstmt.executeQuery();
 
             User user = null;
@@ -69,5 +68,10 @@ public class SelectJdbcTemplate {
                 con.close();
             }
         }
+    }
+
+    public PreparedStatement setValues(String userId, PreparedStatement pstmt) throws SQLException {
+        pstmt.setString(1, userId);
+        return pstmt;
     }
 }
