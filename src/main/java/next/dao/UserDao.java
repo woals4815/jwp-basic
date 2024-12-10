@@ -55,7 +55,6 @@ public class UserDao {
             public List<User> mapRow(ResultSet rs) throws SQLException {
                 List<User> users = new ArrayList<>();
                 while (rs.next()) {
-
                     User newUser = new User(
                             rs.getString("userId"),
                             rs.getString("password"),
@@ -79,11 +78,11 @@ public class UserDao {
                 return pstmt;
             }
             @Override
-            public List<User> mapRow(ResultSet rs) throws SQLException {
-                return Collections.emptyList();
+            public User mapRow(ResultSet rs) throws SQLException {
+                return new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"), rs.getString("email"));
             }
         };
-        User user = selectJdbcTemplate.queryForObject("SELECT userId, password, name, email FROM USERS WHERE userid=?", userId);
-        return user;
+        Object result = selectJdbcTemplate.queryForObject("SELECT userId, password, name, email FROM USERS WHERE userid=?", userId);
+        return (User) result;
     }
 }
