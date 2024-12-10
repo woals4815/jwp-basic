@@ -41,4 +41,11 @@ public class UserDaoTest {
         List<User> users = userDao.findAll();
         assertEquals(1, users.size());
     }
+
+    @Test
+    public void findById() throws Exception {
+        UserDao userDao = new UserDao();
+        User user = userDao.findByUserId("admin");
+        assertEquals("admin", user.getUserId());
+    }
 }
