@@ -114,7 +114,6 @@
 		<testSourceDirectory>src/test/java</testSourceDirectory>
 		<outputDirectory>webapp/WEB-INF/classes</outputDirectory>
 		<testOutputDirectory>target/test-classes</testOutputDirectory>
-
 		<resources>
 			<resource>
 				<directory>src/main/resources</directory>
