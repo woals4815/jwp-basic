@@ -14,24 +14,26 @@ import org.slf4j.LoggerFactory;
 
 public class UserDao {
     private static final Logger log = LoggerFactory.getLogger(UserDao.class);
-    private final InsertJdbcTemplate insertJdbcTemplate = new InsertJdbcTemplate() {
+
+    private final JdbcTemplate insertJdbcTemplate = new JdbcTemplate() {
         @Override
-        public String createQueryForInsert() {
-            return "INSERT INTO USERS VALUES(?, ?, ?, ?)";
-        }
-        @Override
-        public PreparedStatement setValuesForInsert(User user, PreparedStatement pstmt) throws SQLException {
+        public PreparedStatement setValues(User user, PreparedStatement pstmt) throws SQLException {
             pstmt.setString(1, user.getUserId());
             pstmt.setString(2, user.getPassword());
             pstmt.setString(3, user.getName());
             pstmt.setString(4, user.getEmail());
             return pstmt;
         }
+
+        @Override
+        public String createQuery() {
+            return "INSERT INTO USERS VALUES (?, ?, ?, ?)";
+        }
     };
 
-    private final UpdateJdbcTemplate updateJdbcTemplate = new UpdateJdbcTemplate() {
+    private final JdbcTemplate updateJdbcTemplate = new JdbcTemplate() {
         @Override
-        public PreparedStatement setValuesForUpdate(User user, PreparedStatement pstmt) throws SQLException {
+        public PreparedStatement setValues(User user, PreparedStatement pstmt) throws SQLException {
             pstmt.setString(1, user.getPassword());
             pstmt.setString(2, user.getName());
             pstmt.setString(3, user.getEmail());
@@ -40,14 +42,15 @@ public class UserDao {
         }
 
         @Override
-        public String createQueryForUpdate() {
+        public String createQuery() {
             String sql = "UPDATE USERS SET password=?, name=?, email=? WHERE userId=?";
             return sql;
         }
     };
 
+
     public void insert(User user) throws SQLException {
-        insertJdbcTemplate.insert(user);
+        insertJdbcTemplate.update(user);
     }
 
     public void update(User user) throws SQLException {
