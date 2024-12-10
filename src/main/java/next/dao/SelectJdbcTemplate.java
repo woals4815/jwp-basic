@@ -10,13 +10,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class SelectJdbcTemplate {
-    public List<User> query(String sql) throws SQLException {
+    public List query(String sql) throws SQLException {
         Connection con = null;
         ResultSet rs = null;
         try {
             con = ConnectionManager.getConnection();
             rs = con.prepareStatement(sql).executeQuery();
-            return mapRow(rs);
+            List list = new ArrayList();
+            while(rs.next()) {
+                list.add(mapRow(rs));
+            }
+            return list;
         } finally {
             if (rs != null) {
                 rs.close();
@@ -27,7 +31,7 @@ public abstract class SelectJdbcTemplate {
         }
     }
 
-    public User queryForObject(String sql, String userId) throws SQLException {
+    public Object queryForObject(String sql, String userId) throws SQLException {
         Connection con = null;
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -37,13 +41,12 @@ public abstract class SelectJdbcTemplate {
             setValues(pstmt);
             rs = pstmt.executeQuery();
 
-            User user = null;
+            Object value = null;
             if (rs.next()) {
-                user = new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"),
-                        rs.getString("email"));
+                value = mapRow(rs);
             }
 
-            return user;
+            return value;
         } finally {
             if (rs != null) {
                 rs.close();
@@ -59,6 +62,6 @@ public abstract class SelectJdbcTemplate {
 
     public abstract PreparedStatement setValues( PreparedStatement pstmt) throws SQLException;
 
-    public abstract List<User> mapRow(ResultSet rs) throws SQLException;
+    public abstract Object mapRow(ResultSet rs) throws SQLException;
 
 }
