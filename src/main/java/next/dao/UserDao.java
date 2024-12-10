@@ -9,8 +9,12 @@ import java.util.List;
 
 import core.jdbc.ConnectionManager;
 import next.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UserDao {
+    private static final Logger log = LoggerFactory.getLogger(UserDao.class);
+
     public void insert(User user) throws SQLException {
         Connection con = null;
         PreparedStatement pstmt = null;
@@ -41,7 +45,32 @@ public class UserDao {
 
     public List<User> findAll() throws SQLException {
         // TODO 구현 필요함.
-        return new ArrayList<User>();
+        Connection con = null;
+        ResultSet rs = null;
+
+        try {
+            con = ConnectionManager.getConnection();
+            String sql = "SELECT * FROM USERS";
+            rs = con.prepareStatement(sql).executeQuery();
+            List<User> users = new ArrayList<>();
+            while(rs.next()) {
+                User newUser = new User(
+                        rs.getString("userId"),
+                        rs.getString("password"),
+                        rs.getString("name"),
+                        rs.getString("email")
+                );
+                users.add(newUser);
+            }
+            return users;
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        }
     }
 
     public User findByUserId(String userId) throws SQLException {
