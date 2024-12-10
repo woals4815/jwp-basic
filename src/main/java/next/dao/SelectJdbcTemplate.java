@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelectJdbcTemplate {
+public abstract class SelectJdbcTemplate {
     public List<User> query(String sql) throws SQLException {
         Connection con = null;
         ResultSet rs = null;
@@ -34,7 +34,7 @@ public class SelectJdbcTemplate {
         try {
             con = ConnectionManager.getConnection();
             pstmt = con.prepareStatement(sql);
-            setValues(userId, pstmt);
+            setValues(pstmt);
             rs = pstmt.executeQuery();
 
             User user = null;
@@ -57,23 +57,8 @@ public class SelectJdbcTemplate {
         }
     }
 
-    public PreparedStatement setValues(String param, PreparedStatement pstmt) throws SQLException {
-        pstmt.setString(1, param);
-        return pstmt;
-    }
+    public abstract PreparedStatement setValues( PreparedStatement pstmt) throws SQLException;
 
-    public List<User> mapRow(ResultSet rs) throws SQLException {
-        List<User> users = new ArrayList<>();
+    public abstract List<User> mapRow(ResultSet rs) throws SQLException;
 
-        while(rs.next()) {
-            User newUser = new User(
-                    rs.getString("userId"),
-                    rs.getString("password"),
-                    rs.getString("name"),
-                    rs.getString("email")
-            );
-            users.add(newUser);
-        }
-        return users;
-    }
 }
