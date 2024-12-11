@@ -2,7 +2,6 @@ package next.dao;
 
 
 import core.jdbc.ConnectionManager;
-import core.jdbc.JdbcTemplate;
 import next.model.Question;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +10,6 @@ import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import static org.junit.Assert.*;
 
-import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -24,7 +22,6 @@ public class QuestionDaoTest {
         populator.addScript(new ClassPathResource("jwp.sql"));
         DatabasePopulatorUtils.execute(populator, ConnectionManager.getDataSource());
     }
-
 
     @Test
     public void testInsert() {
