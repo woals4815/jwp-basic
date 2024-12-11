@@ -1,3 +1,5 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html lang="kr">
 <head>
@@ -16,7 +18,7 @@
     <div class="col-md-12">
         <div class="navbar-header">
 
-            <a href="../index.html" class="navbar-brand">SLiPP</a>
+            <a href="/" class="navbar-brand">SLiPP</a>
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse1">
                 <i class="glyphicon glyphicon-search"></i>
             </button>
@@ -44,33 +46,12 @@
         </div>
     </div>
 </nav>
-<div class="navbar navbar-default" id="subnav">
-    <div class="col-md-12">
-        <div class="navbar-header">
-            <a href="#" style="margin-left:15px;" class="navbar-btn btn btn-default btn-plus dropdown-toggle" data-toggle="dropdown"><i class="glyphicon glyphicon-home" style="color:#dd1111;"></i> Home <small><i class="glyphicon glyphicon-chevron-down"></i></small></a>
-            <ul class="nav dropdown-menu">
-                <li><a href="../user/profile.html"><i class="glyphicon glyphicon-user" style="color:#1111dd;"></i> Profile</a></li>
-                <li class="nav-divider"></li>
-                <li><a href="#"><i class="glyphicon glyphicon-cog" style="color:#dd1111;"></i> Settings</a></li>
-            </ul>
-        </div>
-        <div class="collapse navbar-collapse" id="navbar-collapse2">
-            <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="../index.html">Posts</a></li>
-                <li><a href="../user/login.html" role="button">로그인</a></li>
-                <li><a href="../user/form.html" role="button">회원가입</a></li>
-                <li><a href="#" role="button">로그아웃</a></li>
-                <li><a href="#" role="button">개인정보수정</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
-
+<%@ include file="/include/navigation.jspf" %>
 <div class="container" id="main">
     <div class="col-md-12 col-sm-12 col-lg-12">
         <div class="panel panel-default">
           <header class="qna-header">
-              <h2 class="qna-title">InitializingBean implements afterPropertiesSet() 호출되지 않는 문제.</h2>
+              <h2 class="qna-title">${question.title}</h2>
           </header>
           <div class="content-main">
               <article class="article">
@@ -81,7 +62,7 @@
                       <div class="article-header-text">
                           <a href="/users/92/kimmunsu" class="article-author-name">kimmunsu</a>
                           <a href="/questions/413" class="article-header-time" title="퍼머링크">
-                              2015-12-30 01:47
+                              ${question.createdDate}
                               <i class="icon-link"></i>
                           </a>
                       </div>
@@ -102,7 +83,7 @@
                               </form>
                           </li>
                           <li>
-                              <a class="link-modify-article" href="/index.html">목록</a>
+                              <a class="link-modify-article" href="/">목록</a>
                           </li>
                       </ul>
                   </div>
