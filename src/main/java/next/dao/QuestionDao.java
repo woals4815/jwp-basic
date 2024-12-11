@@ -39,12 +39,14 @@ public class QuestionDao implements Dao<Question> {
     public Question findById(int id) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate();
         return jdbcTemplate.queryForObject("SELECT * FROM QUESTIONS WHERE questionId=?", (ResultSet rs) -> {
+            int questionId = rs.getInt("questionId");
             String writer = rs.getString("writer");
             String title = rs.getString("title");
             String contents = rs.getString("contents");
             Timestamp createdDate = rs.getTimestamp("createdDate");
             int countOfAnswer = rs.getInt("countOfAnswer");
             return new Question(
+                    questionId,
                     writer,
                     title,
                     contents,
