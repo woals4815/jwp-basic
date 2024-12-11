@@ -22,6 +22,7 @@
   * 후자
     * 동적포함. 런타임시점에 포함이 이루어짐
     * jsp가 실행되는 동안 지정된 페이지를 별도로 처리한 후 결과 포함
+  * jsp:inlcude page를 사용해서 navigation을 보여줄 때 왜 다시 GET //qna/show.jsp를 호출할까?
     
 
 

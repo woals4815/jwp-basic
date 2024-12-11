@@ -88,7 +88,6 @@
                       </ul>
                   </div>
               </article>
-
               <div class="qna-comment">
                   <div class="qna-comment-slipp">
                       <p class="qna-comment-count"><strong>2</strong>개의 의견</p>
@@ -152,9 +151,9 @@
                                   </ul>
                               </div>
                           </article>
-                          <form class="submit-write">
+                          <form class="submit-write" id="answerForm" method="post" action="/qna/answer">
                               <div class="form-group" style="padding:14px;">
-                                  <textarea class="form-control" placeholder="Update your status"></textarea>
+                                  <textarea class="form-control" form="answerForm" id="answer" name="contents" placeholder="Update your status"></textarea>
                               </div>
                               <button class="btn btn-success pull-right" type="button">Post</button>
                               <div class="clearfix" />
