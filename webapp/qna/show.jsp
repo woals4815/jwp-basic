@@ -143,45 +143,14 @@
 <script>
 		$('#submitBtn').on("click", (e) => {
 			e.preventDefault();
-
-			function renderResponse(answer) {
-				const commentContainer = document.getElementById("comment-container");
-				commentContainer.innerHTML = `
-							<article class="article">
-								<div class="article-header">
-									<div class="article-header-thumb">
-										<img src="https://graph.facebook.com/v2.3/1324855987/picture" class="article-author-thumb" alt="">
-									</div>
-									<div class="article-header-text">
-										${answer.writer}
-										<div class="article-header-time"><fmt:formatDate pattern="yyyy-MM-dd HH:mm:ss" value="${each.createdDate}" /></div>
-									</div>
-								</div>
-								<div class="article-doc comment-doc">
-									<p>${answer.contents}</p>
-								</div>
-								<div class="article-util">
-									<ul class="article-util-list">
-										<li>
-											<a class="link-modify-article" href="/api/qna/updateAnswer?answerId=${answer.answerId}">수정</a>
-										</li>
-										<li>
-											<form class="form-delete" action="/api/qna/deleteAnswer" method="POST">
-												<input type="hidden" name="answerId" value="${answer.answerId}" />
-												<button type="submit" class="link-delete-article">삭제</button>
-											</form>
-										</li>
-									</ul>
-								</div>
-							</article>
-				`
-			}
 			$.ajax({
 				type: "post",
 				url: "http://localhost:8080/qna/answer",
 				data: $("form[name=answer]").serialize(),
 				success: function (data, textStatus) {
-					renderResponse(data);
+					var answerTemplate = $("#answerTemplate").html();
+					var template = answerTemplate.format(data.writer, new Date(data.createdDate), data.contents, data.answerId);
+					$(".qna-comment-slipp-articles").prepend(template);
 				},
 				error: function (err) {
 					console.log(err);
