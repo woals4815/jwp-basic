@@ -11,9 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import core.nmvc.AnnotationHandlerMapping;
-import core.nmvc.HandlerExecution;
-import core.nmvc.HandlerMapping;
+import com.google.common.collect.Lists;
+import core.nmvc.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +26,8 @@ public class DispatcherServlet extends HttpServlet {
 
     private List<HandlerMapping> handlerMappings;
 
+    private List<HandlerAdapter> adapters = Lists.newArrayList();
+
     @Override
     public void init() throws ServletException {
         rm = new LegacyRequestMapping();
@@ -35,6 +36,8 @@ public class DispatcherServlet extends HttpServlet {
         am.initialize();
         handlerMappings.add(rm);
         handlerMappings.add(am);
+        adapters.add(new ControllerHandlerAdapter());
+        adapters.add(new HandlerExecutionAdapter());
     }
 
     @Override
@@ -43,8 +46,6 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
         Object handler = this.getHandler(req);
-
-
         try {
             ModelAndView mav = this.getMav(handler, req, resp);
             View view = mav.getView();
@@ -56,15 +57,13 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     private Object getHandler(HttpServletRequest  req) {
-        Object handler = null;
-        if (am.getHandler(req) != null) {
-            handler = am.getHandler(req);
-        } else if(rm.getHandler(req) != null) {
-            handler = rm.getHandler(req);
-        } else {
-            throw new RuntimeException("No Handler");
+        for(HandlerMapping hm : handlerMappings) {
+            Object handler = hm.getHandler(req);
+            if(handler != null) {
+                return handler;
+            }
         }
-        return handler;
+        return null;
     }
 
     private ModelAndView getMav(
@@ -72,14 +71,12 @@ public class DispatcherServlet extends HttpServlet {
             HttpServletRequest req,
             HttpServletResponse resp
     ) throws Exception {
-
-        if (handler instanceof Controller) {
-            return ((Controller) handler).execute(req, resp);
-        } else if(handler instanceof HandlerExecution) {
-            return ((HandlerExecution) handler).handle(req, resp);
-        } else {
-            throw new ServletException("No mav");
+        for(HandlerAdapter adapter : adapters) {
+            if (adapter.supports(handler)) {
+                return adapter.handle(handler, req, resp);
+            }
         }
+        return null;
     }
 
 }
