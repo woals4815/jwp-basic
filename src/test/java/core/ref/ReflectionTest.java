@@ -7,13 +7,18 @@ import org.slf4j.LoggerFactory;
 import next.model.Question;
 import next.model.User;
 
+import java.util.Arrays;
+
 public class ReflectionTest {
     private static final Logger logger = LoggerFactory.getLogger(ReflectionTest.class);
 
     @Test
     public void showClass() {
         Class<Question> clazz = Question.class;
-        logger.debug(clazz.getName());
+        Arrays.asList(clazz.getDeclaredMethods()).forEach(System.out::println);
+        Arrays.asList(clazz.getDeclaredFields()).forEach(System.out::println);
+        Arrays.asList(clazz.getDeclaredConstructors()).forEach(System.out::println);
+        Arrays.asList(clazz.getDeclaredAnnotations()).forEach(System.out::println);
     }
     
     @Test
